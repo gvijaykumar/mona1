@@ -1,0 +1,60 @@
+<%-- 
+    Document   : userkey
+    Created on : Dec 1, 2013, 3:31:32 PM
+    Author     : Thanu
+--%>
+
+ <%@page import="java.sql.*"%>
+<%@page import="databaseconnection.SendEmail" %>
+<%@page import="java.sql.*" %>
+<%@page import="java.util.*" %>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Mona: Secure Multi-Owner Data Sharing for Dynamic Groups in the Cloud</h1>
+        <%
+      
+Statement st = null;
+ResultSet rs = null;
+
+String email = (String)session.getAttribute("email");
+out.println(email);
+
+//String email1 = request.getParameter("select");
+
+
+
+            if(email!=""){
+                      try{
+            Random rand = new Random();
+            
+            int num = rand.hashCode();
+             Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/secure","root","root");
+            String s = "insert into random(email,rkey) values('"+email+"',"+num+")";
+            PreparedStatement ps = con.prepareStatement(s);
+            ps.executeUpdate();
+            SendEmail e=new SendEmail();
+            e.Email(email,num);
+            out.println(email);
+            
+            response.sendRedirect("userview.jsp?Message=Your Secretkey Successfully Sent to MailId ");
+            }catch(Exception e){
+            out.println(e);
+            }
+
+            }else{
+                out.println("ENTER USERNAME AND EMAIL");
+            Thread.sleep(1000);
+            response.sendRedirect("user.jsp?Message=Failed");
+                          }
+        %>
+        
+    </body>
+</html>
